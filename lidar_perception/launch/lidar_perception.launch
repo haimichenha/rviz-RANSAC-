@@ -1,0 +1,47 @@
+<launch>
+    <!-- 
+    激光雷达点云处理节点 Launch 文件
+    用途：实验三 - 点云分割与聚类
+    
+    使用方法：
+    1. 实时处理：roslaunch lidar_perception lidar_perception.launch
+    2. 回放 bag：roslaunch lidar_perception lidar_perception.launch bag_file:=/path/to/your.bag
+    -->
+
+    <!-- 参数配置 -->
+    <arg name="input_topic" default="/velodyne_points" />
+    <arg name="bag_file" default="" />
+    <arg name="rviz" default="true" />
+
+    <!-- 点云处理节点 -->
+    <node pkg="lidar_perception" type="lidar_perception_node" name="lidar_perception_node" output="screen">
+        <!-- 输入话题 -->
+        <param name="input_topic" value="$(arg input_topic)" />
+        
+        <!-- 下采样参数 -->
+        <param name="voxel_leaf_size" value="0.1" />
+        
+        <!-- 地面分割参数 (RANSAC 距离阈值) -->
+        <param name="ground_threshold" value="0.3" />
+        
+        <!-- 欧几里德聚类参数 -->
+        <param name="cluster_tolerance" value="0.5" />
+        <param name="min_cluster_size" value="50" />
+        <param name="max_cluster_size" value="25000" />
+        
+        <!-- ROI 区域过滤 (单位：米) -->
+        <param name="min_x" value="-50.0" />
+        <param name="max_x" value="50.0" />
+        <param name="min_y" value="-50.0" />
+        <param name="max_y" value="50.0" />
+        <param name="min_z" value="-2.0" />
+        <param name="max_z" value="3.0" />
+    </node>
+
+    <!-- 回放 bag 文件 (如果指定) -->
+    <node pkg="rosbag" type="play" name="player" args="--clock $(arg bag_file)" if="$(eval bag_file != '')" />
+
+    <!-- 启动 RViz 可视化 -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find lidar_perception)/rviz/lidar_perception.rviz" if="$(arg rviz)" />
+
+</launch>
