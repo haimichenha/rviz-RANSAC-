@@ -2,7 +2,7 @@
 
 基于 ROS Noetic、C++14 与 PCL 的激光雷达点云处理项目。核心功能是订阅 `sensor_msgs/PointCloud2`，依次完成 ROI 过滤、体素下采样、RANSAC 地面分割、非地面障碍物欧几里得聚类，并在 RViz 中发布彩色点云、边界框和距离标注。
 
-仓库还包含 PCD 离线实验程序、RViz 配置、Unity 场景与语义地图导出数据。Unity 数据用于地图数据准备与后续扩展，不是默认实时点云节点的直接输入。
+项目还保留 Unity 场景、车道语义地图 CSV 与 PCD 数据。经项目记录确认，这些地图数据曾用于企业雷达车的自动驾驶路径跟随；本仓库保留感知与地图数据侧材料，完整车辆驱动、规划与控制工程不在当前代码树中。详见 [`docs/语义地图与企业雷达车集成.md`](docs/语义地图与企业雷达车集成.md)。
 
 ## 实时点云处理链路
 
@@ -130,7 +130,7 @@ rosrun lidar_perception pcd_ground_segmentation "$(rospack find lidar_perception
 rosrun lidar_perception pcd_clustering _input_topic:=/velodyne_points _frame_id:=camera_init
 ```
 
-## Unity 场景与语义地图数据
+## Unity 场景、语义地图与企业雷达车路径跟随
 
 `unity/again.unity` 与 [`docs/semantic_map.md`](docs/semantic_map.md) 保留 Unity 场景和语义地图导出数据说明：
 
@@ -141,7 +141,7 @@ rosrun lidar_perception pcd_clustering _input_topic:=/velodyne_points _frame_id:
 | `docs/data/semantic_map/roadedge.csv` | 道路边界或路沿关联信息。 |
 | `docs/data/semantic_map/auto.pcd` | 点云地图数据快照。 |
 
-这些文件属于 Unity 地图标注与数据准备材料。若要在 ROS 中使用，需要自行补充格式转换或加载脚本；它们不会由 `lidar_perception_node` 自动读取。
+这些文件属于 Unity 地图标注与数据准备材料。它们不会由 `lidar_perception_node` 自动读取，但可作为上层地图/路径系统的输入；项目记录中该数据链已用于企业雷达车的自动驾驶路径跟随。源码、部署参数和车辆控制接口未包含在本仓库，因此不能仅凭当前代码复现完整车辆行为。
 
 ## 目录结构
 
@@ -157,9 +157,10 @@ rosrun lidar_perception pcd_clustering _input_topic:=/velodyne_points _frame_id:
 │       └── pcd_clustering.cpp               # 实时聚类与边界框
 ├── unity/again.unity                        # Unity 场景文件
 └── docs/
-    ├── assets/                              # README 运行截图
+    ├── assets/                              # RViz 与 Unity 运行截图
     ├── data/semantic_map/                   # Unity 语义地图导出数据
     ├── semantic_map.md
+    ├── 语义地图与企业雷达车集成.md
     └── 机器人开发实训报告.docx
 ```
 
@@ -167,5 +168,6 @@ rosrun lidar_perception pcd_clustering _input_topic:=/velodyne_points _frame_id:
 
 - ROS Noetic、C++14、PCL、`pcl_ros`、`pcl_conversions`、RViz；
 - `sensor_msgs/PointCloud2`、`visualization_msgs/MarkerArray`、PCD、rosbag；
-- 代码实现点云预处理、平面分割、聚类与可视化，不包含目标分类、跟踪或完整车辆控制闭环；
+- 代码实现点云预处理、平面分割、聚类与可视化，不包含目标分类、跟踪或企业雷达车的完整车辆控制源码；
+- 企业雷达车路径跟随属于已确认的项目集成结果；当前仓库仅保存其点云感知与语义地图侧材料；
 - 部分资料来自课程实验记录；运行前应核对 ROS 依赖、输入坐标系和真实/回放点云话题。
