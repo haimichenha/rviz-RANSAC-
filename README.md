@@ -39,7 +39,7 @@ PointCloud2 输入
 
 ```text
 .
-└── lidar_perception/
+├── lidar_perception/
     ├── CMakeLists.txt
     ├── package.xml
     ├── launch/
@@ -50,6 +50,11 @@ PointCloud2 输入
         ├── lidar_perception_node.cpp      # 实时点云处理主节点
         ├── pcd_clustering.cpp             # PCD/实时聚类与边界框显示实验
         └── pcd_ground_segmentation.cpp    # PCD 地面分割实验
+├── unity/
+│   └── again.unity                         # Unity 场景文件
+└── docs/
+    ├── 机器人开发实训报告.docx
+    └── data/semantic_map/                  # Unity 语义地图导出数据
 ```
 
 ## 功能说明
@@ -72,6 +77,19 @@ PointCloud2 输入
 ### 3. 聚类与边界框可视化
 
 `pcd_clustering.cpp` 对非地面点进行欧几里得聚类，计算每个聚类的包围盒、中心点和距离，并通过 `MarkerArray` 在 RViz 中显示彩色边界框。
+
+## Unity 语义地图数据
+
+`unity/again.unity` 与 [`docs/semantic_map.md`](docs/semantic_map.md) 对应本项目保留的 Unity 场景与语义地图导出数据：
+
+| 文件 | 内容 |
+| --- | --- |
+| `docs/data/semantic_map/lane.csv` | 车道拓扑、前后继与限速等信息。 |
+| `docs/data/semantic_map/dtlane.csv` | 车道中心线采样点、方向、坡度等属性。 |
+| `docs/data/semantic_map/roadedge.csv` | 道路边界或路沿关联信息。 |
+| `docs/data/semantic_map/auto.pcd` | 点云地图数据。 |
+
+这些文件属于 Unity 语义地图与地图数据准备材料，不是 `lidar_perception` 默认点云处理节点的直接输入；如需在 ROS 中使用，需要另行编写转换或加载脚本。
 
 ## 编译方式
 
